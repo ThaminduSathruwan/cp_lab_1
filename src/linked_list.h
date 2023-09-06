@@ -22,8 +22,7 @@ public:
         }
     }
 
-    void Populate(int n, int mInsert, int mDelete,
-                  std::unordered_set<int> &insertVals, std::unordered_set<int> &deleteVals);
+    void Populate(int n);
 
     virtual void Member() = 0;
     virtual void Insert(int data) = 0;

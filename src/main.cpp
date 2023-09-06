@@ -62,9 +62,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    std::unordered_set<int> insertVals, deleteVals;
-
-    list->Populate(n, m * mInsert, m * mDelete, insertVals, deleteVals);
+    list->Populate(n);
 
     // TODO: Implement this
 
