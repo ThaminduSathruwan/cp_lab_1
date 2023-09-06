@@ -35,7 +35,6 @@ void LinkedList::Populate(int n, int mInsert, int mDelete,
         }
         curr = next;
         length++;
-        std::cout << "Inserting " << *it << std::endl;
     }
 
     // Generate numbers to delete that are already in the linked list
