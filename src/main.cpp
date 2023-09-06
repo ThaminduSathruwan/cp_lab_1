@@ -2,15 +2,15 @@
 #include <unordered_set>
 #include <pthread.h>
 #include "linked_list.h"
+#include "threads.h"
 
-void *thread_func(void *arg);
 void print_usage();
 
 int main(int argc, char **argv)
 {
-    int n, m, type;
+    int n, m, type, threadCnt;
 
-    if (argc != 7)
+    if (argc != 8)
     {
         print_usage();
         return 1;
@@ -19,8 +19,9 @@ int main(int argc, char **argv)
     n = atoi(argv[1]);
     m = atoi(argv[2]);
     type = atoi(argv[3]);
+    threadCnt = atoi(argv[4]);
 
-    if (n <= 0 || m <= 0 || (type != 1 && type != 2 && type != 3))
+    if (n <= 0 || m <= 0 || (type != 1 && type != 2 && type != 3) || threadCnt <= 0)
     {
         print_usage();
         return 1;
@@ -29,9 +30,9 @@ int main(int argc, char **argv)
     double mMember, mInsert, mDelete;
     try
     {
-        mMember = std::stod(argv[4]);
-        mInsert = std::stod(argv[5]);
-        mDelete = std::stod(argv[6]);
+        mMember = std::stod(argv[5]);
+        mInsert = std::stod(argv[6]);
+        mDelete = std::stod(argv[7]);
     }
     catch (std::exception &e)
     {
@@ -63,21 +64,10 @@ int main(int argc, char **argv)
     }
 
     std::unordered_set<int> insertVals, deleteVals;
-
     list->Populate(n, m * mInsert, m * mDelete, insertVals, deleteVals);
-
-    // TODO: Implement this
+    run_threads(threadCnt, list, insertVals, deleteVals, m, mMember, mInsert, mDelete);
 
     return 0;
-}
-
-void *thread_func(void *arg)
-{
-    LinkedList *list = (LinkedList *)arg;
-
-    // TODO: Implement this
-
-    return NULL;
 }
 
 void print_usage()
@@ -86,6 +76,7 @@ void print_usage()
               << "\tn:\t\tnumber of initial elements in the linked list" << std::endl
               << "\tm:\t\tnumber of operations per thread" << std::endl
               << "\ttype:\t\t1 for serial, 2 for mutex, 3 for rwlock" << std::endl
+              << "\tthread_cnt:\tnumber of threads to use" << std::endl
               << "\tm_Member:\tfraction of m operations that are member operations" << std::endl
               << "\tm_Insert:\tfraction of m operations that are insert operations" << std::endl
               << "\tm_Delete:\tfraction of m operations that are delete operations" << std::endl;
