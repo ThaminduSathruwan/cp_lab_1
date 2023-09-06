@@ -66,6 +66,7 @@ int main(int argc, char **argv)
     std::unordered_set<int> insertVals, deleteVals;
     list->Populate(n, m * mInsert, m * mDelete, insertVals, deleteVals);
     run_threads(threadCnt, list, insertVals, deleteVals, m, mMember, mInsert, mDelete);
+    delete list;
 
     return 0;
 }
