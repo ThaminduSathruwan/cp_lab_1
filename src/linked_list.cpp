@@ -58,47 +58,132 @@ void LinkedList::Populate(int n, int mInsert, int mDelete,
     }
 }
 
-void SerialLinkedList::Member()
+// Check if an element exists in the linked list
+int SerialLinkedList::Member(int data)
 {
-    // TODO: Implement this
+    Node *curr = head;
+
+    while (curr != nullptr && curr->data <= data)
+        curr = curr->next;
+
+    if (curr == nullptr || curr->data > data)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
 }
 
-void SerialLinkedList::Insert(int data)
+// Insert an element into the linked list
+int SerialLinkedList::Insert(int data)
 {
-    // TODO: Implement this
+    Node *curr = head;
+    Node *prev = nullptr;
+    Node *temp;
+
+    while (curr != nullptr && curr->data < data)
+    {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (curr == nullptr || curr->data > data)
+    {
+        temp = new Node;
+        temp->data = data;
+        temp->next = curr;
+        if (prev == nullptr)
+        {
+            head = temp;
+        }
+        else
+        {
+            prev->next = temp;
+        }
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
-void SerialLinkedList::Remove(int data)
+// Remove an element from the linked list
+int SerialLinkedList::Remove(int data)
 {
-    // TODO: Implement this
+    Node *curr = head;
+    Node *prev = nullptr;
+
+    while (curr != nullptr && curr->data < data)
+    {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (curr != nullptr && curr->data == data)
+    {
+        if (prev == nullptr)
+        {
+            head = curr->next;
+        }
+        else
+        {
+            prev->next = curr->next;
+        }
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
-void MutexParallelLinkedList::Member()
+int MutexParallelLinkedList::Member(int data)
 {
-    // TODO: Implement this
+    pthread_mutex_lock(&mutex);
+    int result = SerialLinkedList::Member(data);
+    pthread_mutex_unlock(&mutex);
+    return result;
 }
 
-void MutexParallelLinkedList::Insert(int data)
+int MutexParallelLinkedList::Insert(int data)
 {
-    // TODO: Implement this
+    pthread_mutex_lock(&mutex);
+    int result = SerialLinkedList::Insert(data);
+    pthread_mutex_unlock(&mutex);
+    return result;
 }
 
-void MutexParallelLinkedList::Remove(int data)
+int MutexParallelLinkedList::Remove(int data)
 {
-    // TODO: Implement this
+    pthread_mutex_lock(&mutex);
+    int result = SerialLinkedList::Remove(data);
+    pthread_mutex_unlock(&mutex);
+    return result;
 }
 
-void RwLockParallelLinkedList::Member()
+int RwLockParallelLinkedList::Member(int data)
 {
-    // TODO: Implement this
+    pthread_rwlock_rdlock(&rwlock);
+    int result = SerialLinkedList::Member(data);
+    pthread_rwlock_unlock(&rwlock);
+    return result;
 }
 
-void RwLockParallelLinkedList::Insert(int data)
+int RwLockParallelLinkedList::Insert(int data)
 {
-    // TODO: Implement this
+    pthread_rwlock_wrlock(&rwlock);
+    int result = SerialLinkedList::Insert(data);
+    pthread_rwlock_unlock(&rwlock);
+    return result;
 }
 
-void RwLockParallelLinkedList::Remove(int data)
+int RwLockParallelLinkedList::Remove(int data)
 {
-    // TODO: Implement this
+    pthread_rwlock_wrlock(&rwlock);
+    int result = SerialLinkedList::Remove(data);
+    pthread_rwlock_unlock(&rwlock);
+    return result;
 }
