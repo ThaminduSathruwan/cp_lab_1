@@ -1,14 +1,14 @@
 #include <iostream>
 #include <ctime>
-#include <unordered_set>
+#include <set>
 #include <pthread.h>
 #include "linked_list.h"
 
 void LinkedList::Populate(int n, int mInsert, int mDelete,
-                          std::unordered_set<int> &insertVals, std::unordered_set<int> &deleteVals)
+                          std::set<int> &insertVals, std::set<int> &deleteVals)
 {
     std::srand(std::time(nullptr)); // use current time as seed for random generator
-    std::unordered_set<int> uniqueVals;
+    std::set<int> uniqueVals;
 
     // Generate n unique values using random number generator
     while (uniqueVals.size() < (std::size_t)n)
@@ -66,14 +66,7 @@ bool SerialLinkedList::Member(int data)
     while (curr != nullptr && curr->data <= data)
         curr = curr->next;
 
-    if (curr == nullptr || curr->data > data)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+    return !(curr == nullptr || curr->data > data);
 }
 
 // Insert an element into the linked list

@@ -2,7 +2,7 @@
 #define LINKED_LIST_H
 
 #include <iostream>
-#include <unordered_set>
+#include <set>
 #include <pthread.h>
 
 class LinkedList
@@ -23,7 +23,7 @@ public:
     }
 
     void Populate(int n, int mInsert, int mDelete,
-                  std::unordered_set<int> &insertVals, std::unordered_set<int> &deleteVals);
+                  std::set<int> &insertVals, std::set<int> &deleteVals);
 
     virtual bool Member(int data) = 0;
     virtual bool Insert(int data) = 0;
