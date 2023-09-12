@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include <set>
 #include <pthread.h>
 #include "linked_list.h"
@@ -37,12 +38,15 @@ void *thread_func(void *arg)
     return NULL;
 }
 
-void run_threads(int threadCnt, LinkedList *list,
+long run_threads(int threadCnt, LinkedList *list,
                  std::set<int> &insertVals, std::set<int> &deleteVals,
                  int m, double mMember, double mInsert, double mDelete)
 {
     std::vector<int> insertValsVec(insertVals.begin(), insertVals.end());
     std::vector<int> deleteValsVec(deleteVals.begin(), deleteVals.end());
+
+    std::chrono::high_resolution_clock::time_point start_time, end_time;
+    start_time = std::chrono::high_resolution_clock::now();
 
     pthread_t *threads = new pthread_t[threadCnt];
     ThreadArgs *args = new ThreadArgs[threadCnt];
@@ -65,6 +69,11 @@ void run_threads(int threadCnt, LinkedList *list,
         pthread_join(threads[i], NULL);
     }
 
+    end_time = std::chrono::high_resolution_clock::now();
+    std::chrono::microseconds::rep timeDiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+
     delete[] args;
     delete[] threads;
+
+    return (long)timeDiff;
 }
