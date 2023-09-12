@@ -105,10 +105,7 @@ bool SerialLinkedList::Insert(int data)
         length++;
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 // Remove an element from the linked list
@@ -137,10 +134,7 @@ bool SerialLinkedList::Remove(int data)
         length--;
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 bool MutexParallelLinkedList::Member(int data)
