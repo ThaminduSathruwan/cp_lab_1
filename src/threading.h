@@ -17,7 +17,7 @@ typedef struct ThreadArgs
     double mInsert;
     double mDelete;
     int threadCnt;
-    pthread_t *tid;
+    unsigned long tid;
 } ThreadArgs;
 
 void *thread_func(void *arg);

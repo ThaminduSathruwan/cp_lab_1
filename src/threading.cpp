@@ -18,7 +18,7 @@ void *thread_func(void *arg)
 
     // Delete
     int mDeleteLocal = (int)(args->mDelete * args->m) / args->threadCnt;
-    int myFirstDeleteIndex = ((int)(*args->tid)) * mDeleteLocal;
+    int myFirstDeleteIndex = ((int)(args->tid)) * mDeleteLocal;
     int myLastDeleteIndex = myFirstDeleteIndex + mDeleteLocal;
     for (int i = myFirstDeleteIndex; i < myLastDeleteIndex; ++i)
     {
@@ -27,7 +27,7 @@ void *thread_func(void *arg)
 
     // Insert
     int mInsertLocal = (int)(args->mInsert * args->m) / args->threadCnt;
-    int myFirstInsertIndex = ((int)(*args->tid)) * mInsertLocal;
+    int myFirstInsertIndex = ((int)(args->tid)) * mInsertLocal;
     int myLastInsertIndex = myFirstInsertIndex + mInsertLocal;
     for (int i = myFirstInsertIndex; i < myLastInsertIndex; ++i)
     {
@@ -56,7 +56,7 @@ void run_threads(int threadCnt, LinkedList *list,
         args[i].mInsert = mInsert;
         args[i].mDelete = mDelete;
         args[i].threadCnt = threadCnt;
-        args[i].tid = &threads[i];
+        args[i].tid = i;
         pthread_create(&threads[i], NULL, thread_func, args + i);
     }
 
