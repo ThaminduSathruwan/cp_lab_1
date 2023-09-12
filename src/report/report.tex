@@ -166,6 +166,142 @@ Even though the \lstinline|LinkedList::Insert| method is implemented to insert v
 
 Also, this method is used to create two lists containing random values to be inserted and deleted from the linked list while performing the operations. Again, the \lstinline|std::set| is used to ensure that the values are unique.
 
+\subsection{Serial Linked List}
+
+The \lstinline|SerialLinkedList| extends the \lstinline|LinkedList| class and implements the serial linked list. The \lstinline|Member|, \lstinline|Insert|, and \lstinline|Remove| methods are implemented to perform the corresponding operations on the linked list. These methods are implemented following the code snippets provided with minimum modifications.
+
+\begin{lstlisting}
+class SerialLinkedList : public LinkedList
+{
+public:
+    SerialLinkedList() : LinkedList() {}
+    virtual ~SerialLinkedList() {}
+
+    virtual bool Member(int data) override;
+    virtual bool Insert(int data) override;
+    virtual bool Remove(int data) override;
+};
+\end{lstlisting}
+\begin{center}
+    \textbf{Listing 2.3.1:} \lstinline|SerialLinkedList| class interface
+\end{center}
+
+\subsection{Concurrent Linked List with Mutexes}
+
+The \lstinline|MutexParallelLinkedList| extends the \lstinline|LinkedList| class and implements the concurrent linked list with mutexes. A new member, \lstinline|pthread_mutex_t mutex|, is added to the class as the mutex for the linked list and initialized in the constructor with \lstinline|pthread_mutex_init| function.
+
+\begin{lstlisting}
+    class MutexParallelLinkedList : public SerialLinkedList
+    {
+    public:
+        MutexParallelLinkedList() : SerialLinkedList()
+        {
+            pthread_mutex_init(&mutex, NULL);
+        }
+    
+        ~MutexParallelLinkedList() {}
+    
+        bool Member(int data) override;
+        bool Insert(int data) override;
+        bool Remove(int data) override;
+    
+    private:
+        pthread_mutex_t mutex;
+    };
+\end{lstlisting}
+\begin{center}
+    \textbf{Listing 2.4.1:} \lstinline|MutexParallelLinkedList| class interface
+\end{center}
+
+Each of the \lstinline|Member|, \lstinline|Insert|, and \lstinline|Remove| methods acquires the mutex before the operation and releases it after the operation is completed. To perform the operation, it calls the same function from the parent \lstinline|SerialLinkedList| class. This ensures that only one thread can operate on the linked list at a time.
+
+\begin{lstlisting}
+bool MutexParallelLinkedList::Member(int data)
+{
+    pthread_mutex_lock(&mutex);
+    bool result = SerialLinkedList::Member(data);
+    pthread_mutex_unlock(&mutex);
+    return result;
+}
+
+bool MutexParallelLinkedList::Insert(int data)
+{
+    pthread_mutex_lock(&mutex);
+    bool result = SerialLinkedList::Insert(data);
+    pthread_mutex_unlock(&mutex);
+    return result;
+}
+
+bool MutexParallelLinkedList::Remove(int data)
+{
+    pthread_mutex_lock(&mutex);
+    bool result = SerialLinkedList::Remove(data);
+    pthread_mutex_unlock(&mutex);
+    return result;
+}
+\end{lstlisting}
+\begin{center}
+    \textbf{Listing 2.4.2:} Implementation of \lstinline|Member|, \lstinline|Insert|, and \lstinline|Remove| functions
+\end{center}
+
+\subsection{Concurrent Linked List with Read-Write Locks}
+
+The \lstinline|RWLockParallelLinkedList| extends the \lstinline|LinkedList| class and implements the concurrent linked list with read-write locks. A new member, \lstinline|pthread_rwlock_t rwlock|, is added to the class as the read-write lock for the linked list and initialized in the constructor with \lstinline|pthread_rwlock_init| function.
+
+\begin{lstlisting}
+class RwLockParallelLinkedList : public SerialLinkedList
+{
+public:
+    RwLockParallelLinkedList() : SerialLinkedList()
+    {
+        pthread_rwlock_init(&rwlock, NULL);
+    }
+
+    ~RwLockParallelLinkedList() {}
+
+    bool Member(int data) override;
+    bool Insert(int data) override;
+    bool Remove(int data) override;
+
+private:
+    pthread_rwlock_t rwlock;
+};
+\end{lstlisting}
+\begin{center}
+    \textbf{Listing 2.5.1:} \lstinline|RwLockParallelLinkedList| class interface
+\end{center}
+
+The \lstinline|Member| method acquires the read lock before the operation and releases it after the operation is completed. This ensures that multiple threads can perform the \lstinline|Member| operation at the same time. The \lstinline|Insert| and \lstinline|Remove| methods acquire the write lock before the operation and release it after the operation is completed. This ensures that only one thread can perform an \lstinline|Insert| or \lstinline|Remove| operation at a time. To perform each operation, it calls the same function from the parent \lstinline|SerialLinkedList| class.
+
+\begin{lstlisting}
+bool RwLockParallelLinkedList::Member(int data)
+{
+    pthread_rwlock_rdlock(&rwlock);
+    bool result = SerialLinkedList::Member(data);
+    pthread_rwlock_unlock(&rwlock);
+    return result;
+}
+
+bool RwLockParallelLinkedList::Insert(int data)
+{
+    pthread_rwlock_wrlock(&rwlock);
+    bool result = SerialLinkedList::Insert(data);
+    pthread_rwlock_unlock(&rwlock);
+    return result;
+}
+
+bool RwLockParallelLinkedList::Remove(int data)
+{
+    pthread_rwlock_wrlock(&rwlock);
+    bool result = SerialLinkedList::Remove(data);
+    pthread_rwlock_unlock(&rwlock);
+    return result;
+}
+\end{lstlisting}
+\begin{center}
+    \textbf{Listing 2.5.2:} Implementation of \lstinline|Member|, \lstinline|Insert|, and \lstinline|Remove| functions
+\end{center}
+
 \section{Configuration}
 
 \section{Results}
