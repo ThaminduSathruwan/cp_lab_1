@@ -3,11 +3,11 @@ src/main
 src/results
 
 # report
-src/report/report.aux
-src/report/report.log
-src/report/report.fls
-src/report/report.fdb_latexmk
-src/report/report.out
-src/report/report.synctex.gz
-src/report/report.toc
-src/report/report.pdf
+report/report.aux
+report/report.log
+report/report.fls
+report/report.fdb_latexmk
+report/report.out
+report/report.synctex.gz
+report/report.toc
+report/report.pdf
