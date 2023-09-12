@@ -103,8 +103,6 @@ This report is about the implementation of concurrent linked lists using mutexes
 
 \section{Implementation}
 
-\section{Implementation}
-
 The implementation of the linked lists is done in C++ and the code is available in the \lstinline|src| directory. The code is organized into the following files:
 
 \begin{itemize}
@@ -301,6 +299,35 @@ bool RwLockParallelLinkedList::Remove(int data)
 \begin{center}
     \textbf{Listing 2.5.2:} Implementation of \lstinline|Member|, \lstinline|Insert|, and \lstinline|Remove| functions
 \end{center}
+
+\subsection{Threading}
+
+The implementation of threading is done in the \lstinline|threading.h| and \lstinline|threading.cpp| files. The \lstinline|threading.h| file contains the \lstinline|ThreadArgs| struct to pass the arguments to the thread function. It also contains the declaration of the thread function, \lstinline|thread_func|, and the \lstinline|run_threads| function which creates the threads and runs them.
+
+\begin{lstlisting}
+typedef struct ThreadArgs
+{
+    LinkedList *list;
+    std::vector<int> *insertVals;
+    std::vector<int> *deleteVals;
+    int m;
+    double mMember;
+    double mInsert;
+    double mDelete;
+    int threadCnt;
+    unsigned long tid;
+} ThreadArgs;
+
+void *thread_func(void *arg);
+long run_threads(int threadCnt, LinkedList *list,
+                    std::set<int> &insertVals, std::set<int> &deleteVals,
+                    int m, double mMember, double mInsert, double mDelete);
+\end{lstlisting}
+\begin{center}
+    \textbf{Listing 2.6.1:} \lstinline|threading.h| file
+\end{center}
+
+The implementation of the above two functions is done in the \lstinline|threading.cpp| file. Instead of using global variables to the required parameters, a pointer to the corresponding \lstinline|ThreadArgs|struct is passed as the argument to the thread function. The thread function will perform \( (m \times mMember)\ /\ threadCnt \) number of \lstinline|Member| operations with random values. It also performs \( (m \times mInsert)\ /\ threadCnt \) number of \lstinline|Insert| operations and \( (m \times mDelete)\ /\ threadCnt \) number of \lstinline|Remove| operations from the passed lists. The \lstinline|run_threads| function creates the threads and waits for them to complete. It also calculates the total time taken by the threads to complete the operations.
 
 \section{Configuration}
 
