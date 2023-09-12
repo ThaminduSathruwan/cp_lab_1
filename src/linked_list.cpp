@@ -66,14 +66,7 @@ bool SerialLinkedList::Member(int data)
     while (curr != nullptr && curr->data <= data)
         curr = curr->next;
 
-    if (curr == nullptr || curr->data > data)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+    return !(curr == nullptr || curr->data > data);
 }
 
 // Insert an element into the linked list
