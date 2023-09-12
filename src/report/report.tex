@@ -103,11 +103,14 @@ This report is about the implementation of concurrent linked lists using mutexes
 
 \section{Implementation}
 
-The implementation of the linked lists is done in C++ and the code is available in the \lstinline|src| directory. The code is organized into the following files:
+The implementation of the linked lists is done in C++ and the code is available in the \lstinline|/src| directory. The code is organized into the following files:
 
 \begin{itemize}
+    \itemsep 0em
     \item \textbf{\lstinline|linked_list.h|:} Contains the class interfaces for the linked list implementations.
     \item \textbf{\lstinline|linked_list.cpp|:} Contains the implementation of the linked list classes.
+    \item \textbf{\lstinline|threading.h|:} Contains the data structure to pass thread arguments, the thread function, and the function to create and run the threads.
+    \item \textbf{\lstinline|threading.cpp|:} Contains the implementation of the above two functions.
 \end{itemize}
 
 \subsection{Linked List Interface}
