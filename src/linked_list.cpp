@@ -102,6 +102,7 @@ int SerialLinkedList::Insert(int data)
         {
             prev->next = temp;
         }
+        length++;
         return 1;
     }
     else
@@ -132,6 +133,8 @@ int SerialLinkedList::Remove(int data)
         {
             prev->next = curr->next;
         }
+        delete curr;
+        length--;
         return 1;
     }
     else

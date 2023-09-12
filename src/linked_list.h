@@ -46,9 +46,9 @@ public:
     SerialLinkedList() : LinkedList() {}
     ~SerialLinkedList() {}
 
-    int Member(int data) override;
-    int Insert(int data) override;
-    int Remove(int data) override;
+    virtual int Member(int data) override;
+    virtual int Insert(int data) override;
+    virtual int Remove(int data) override;
 };
 
 class MutexParallelLinkedList : public SerialLinkedList
