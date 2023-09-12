@@ -103,6 +103,69 @@ This report is about the implementation of concurrent linked lists using mutexes
 
 \section{Implementation}
 
+\section{Implementation}
+
+The implementation of the linked lists is done in C++ and the code is available in the \lstinline|src| directory. The code is organized into the following files:
+
+\begin{itemize}
+    \item \textbf{\lstinline|linked_list.h|:} Contains the class interfaces for the linked list implementations.
+    \item \textbf{\lstinline|linked_list.cpp|:} Contains the implementation of the linked list classes.
+\end{itemize}
+
+\subsection{Linked List Interface}
+
+Firstly, an abstract class, \lstinline|LinkedList|, is created as the interface for the linked list implementations. Following the sample code provided, a struct \lstinline|Node| is created as a protected member of the \lstinline|LinkedList| class to represent the nodes of the linked list.
+
+\begin{lstlisting}
+class LinkedList
+{
+public:
+    LinkedList() : head(nullptr), length(0) {}
+
+    virtual ~LinkedList()
+    {
+        Node *curr = head;
+        Node *next = nullptr;
+        while (curr != nullptr)
+        {
+            next = curr->next;
+            delete curr;
+            curr = next;
+        }
+    }
+
+    void Populate(int n, int mInsert, int mDelete,
+                  std::set<int> &insertVals, std::set<int> &deleteVals);
+
+    virtual bool Member(int data) = 0;
+    virtual bool Insert(int data) = 0;
+    virtual bool Remove(int data) = 0;
+
+protected:
+    typedef struct Node
+    {
+        int data;
+        Node *next;
+    } Node;
+
+    Node *head;
+    int length;
+};
+\end{lstlisting}
+\begin{center}
+    \textbf{Listing 2.1.1:} \lstinline|LinkedList| class interface
+\end{center}
+
+\subsection{Populating the Linked List}
+
+The \lstinline|LinkedList::Populate| method is implemented to populate the linked list with random values. The random seed is taken as the current time and the random number generator is seeded with it.
+
+The linked list is populated as a sorted linked list. For this purpose, a \lstinline|std::set| is used to store the values that are inserted into the linked list. This is done to ensure that the linked list is populated with unique values. Since the \lstinline|std::set| is sorted, the values are inserted into the linked list in sorted order.
+
+Even though the \lstinline|LinkedList::Insert| method is implemented to insert values in the ascending order, it is not used to populate the linked list. The reason is that this function takes a \( O(n) \) time in the worst case. Therefore, to insert \( n \) values, the time complexity would be \( O(n^2) \). The \lstinline|std::set| is implemented using a Red-Black tree which has a worst-case time complexity of \( O(\log n) \). Therefore, the time complexity of inserting \( n \) values into the \lstinline|std::set| is \( O(n \log n) \). This is much better than the \( O(n^2) \) time complexity of inserting values using the \lstinline|LinkedList::Insert| method.
+
+Also, this method is used to create two lists containing random values to be inserted and deleted from the linked list while performing the operations. Again, the \lstinline|std::set| is used to ensure that the values are unique.
+
 \section{Configuration}
 
 \section{Results}
