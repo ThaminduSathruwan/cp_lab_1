@@ -25,9 +25,9 @@ public:
     void Populate(int n, int mInsert, int mDelete,
                   std::unordered_set<int> &insertVals, std::unordered_set<int> &deleteVals);
 
-    virtual int Member(int data) = 0;
-    virtual int Insert(int data) = 0;
-    virtual int Remove(int data) = 0;
+    virtual bool Member(int data) = 0;
+    virtual bool Insert(int data) = 0;
+    virtual bool Remove(int data) = 0;
 
 protected:
     typedef struct Node
@@ -44,11 +44,11 @@ class SerialLinkedList : public LinkedList
 {
 public:
     SerialLinkedList() : LinkedList() {}
-    ~SerialLinkedList() {}
+    virtual ~SerialLinkedList() {}
 
-    virtual int Member(int data) override;
-    virtual int Insert(int data) override;
-    virtual int Remove(int data) override;
+    virtual bool Member(int data) override;
+    virtual bool Insert(int data) override;
+    virtual bool Remove(int data) override;
 };
 
 class MutexParallelLinkedList : public SerialLinkedList
@@ -61,9 +61,9 @@ public:
 
     ~MutexParallelLinkedList() {}
 
-    int Member(int data) override;
-    int Insert(int data) override;
-    int Remove(int data) override;
+    bool Member(int data) override;
+    bool Insert(int data) override;
+    bool Remove(int data) override;
 
 private:
     pthread_mutex_t mutex;
@@ -79,9 +79,9 @@ public:
 
     ~RwLockParallelLinkedList() {}
 
-    int Member(int data) override;
-    int Insert(int data) override;
-    int Remove(int data) override;
+    bool Member(int data) override;
+    bool Insert(int data) override;
+    bool Remove(int data) override;
 
 private:
     pthread_rwlock_t rwlock;
