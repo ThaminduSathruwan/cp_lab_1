@@ -21,7 +21,7 @@ typedef struct ThreadArgs
 } ThreadArgs;
 
 void *thread_func(void *arg);
-void run_threads(int threadCnt, LinkedList *list,
+long run_threads(int threadCnt, LinkedList *list,
                  std::set<int> &insertVals, std::set<int> &deleteVals,
                  int m, double mMember, double mInsert, double mDelete);
 

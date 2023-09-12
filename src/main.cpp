@@ -1,16 +1,18 @@
 #include <iostream>
+#include <fstream>
 #include <set>
 #include <pthread.h>
 #include "linked_list.h"
 #include "threading.h"
 
 void print_usage();
+bool print_time_diff(std::string filename, long timeDiff);
 
 int main(int argc, char **argv)
 {
     int n, m, type, threadCnt;
 
-    if (argc != 8)
+    if (argc != 9)
     {
         print_usage();
         return 1;
@@ -63,12 +65,13 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    std::string filename(argv[8]);
     std::set<int> insertVals, deleteVals;
     list->Populate(n, m * mInsert, m * mDelete, insertVals, deleteVals);
-    run_threads(threadCnt, list, insertVals, deleteVals, m, mMember, mInsert, mDelete);
+    long timeDiff = run_threads(threadCnt, list, insertVals, deleteVals, m, mMember, mInsert, mDelete);
     delete list;
 
-    return 0;
+    return print_time_diff(filename, timeDiff) ? 0 : 1;
 }
 
 void print_usage()
@@ -80,5 +83,21 @@ void print_usage()
               << "\tthread_cnt:\tnumber of threads to use" << std::endl
               << "\tm_Member:\tfraction of m operations that are member operations" << std::endl
               << "\tm_Insert:\tfraction of m operations that are insert operations" << std::endl
-              << "\tm_Delete:\tfraction of m operations that are delete operations" << std::endl;
+              << "\tm_Delete:\tfraction of m operations that are delete operations" << std::endl
+              << "\tfilename:\tname of file to write results to" << std::endl;
+}
+
+bool print_time_diff(std::string filename, long timeDiff)
+{
+    std::ofstream file("results/" + filename, std::ios::app);
+    if (file.fail())
+    {
+        std::cerr << "Failed to open file" << std::endl;
+        return false;
+    }
+
+    file << timeDiff << std::endl;
+    file.close();
+
+    return true;
 }
