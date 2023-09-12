@@ -1,5 +1,5 @@
 #include <iostream>
-#include <unordered_set>
+#include <set>
 #include <pthread.h>
 #include "linked_list.h"
 #include "threading.h"
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    std::unordered_set<int> insertVals, deleteVals;
+    std::set<int> insertVals, deleteVals;
     list->Populate(n, m * mInsert, m * mDelete, insertVals, deleteVals);
     run_threads(threadCnt, list, insertVals, deleteVals, m, mMember, mInsert, mDelete);
     delete list;
