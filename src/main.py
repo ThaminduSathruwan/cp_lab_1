@@ -48,10 +48,7 @@ def calculateAvgAndStd():
     for i in range(3):
         for j in range(3):
             for k in range(1 if j == 0 else 4):
-                filename = (
-                    f"results/Case{i + 1}/{Implementation(j + 1).name}_1.txt" if j == 0
-                    else f"results/Case{i + 1}/{Implementation(j + 1).name}_{2 ** k}.txt"
-                )
+                filename = f"results/Case{i + 1}/{Implementation(j + 1).name}_{2 ** k}.txt"
                 print(filename)
 
                 try:
