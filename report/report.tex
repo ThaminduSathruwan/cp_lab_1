@@ -135,8 +135,7 @@ public:
         }
     }
 
-    void Populate(int n, int mInsert, int mDelete,
-                  std::set<int> &insertVals, std::set<int> &deleteVals);
+    void Populate(int n);
 
     virtual bool Member(int data) = 0;
     virtual bool Insert(int data) = 0;
@@ -165,11 +164,9 @@ The linked list is populated as a sorted linked list. For this purpose, a \lstin
 
 Even though the \lstinline|LinkedList::Insert| method is implemented to insert values in the ascending order, it is not used to populate the linked list. The reason is that this function takes a \( O(n) \) time in the worst case. Therefore, to insert \( n \) values, the time complexity would be \( O(n^2) \). The \lstinline|std::set| is implemented using a Red-Black tree which has a worst-case time complexity of \( O(\log n) \). Therefore, the time complexity of inserting \( n \) values into the \lstinline|std::set| is \( O(n \log n) \). This is much better than the \( O(n^2) \) time complexity of inserting values using the \lstinline|LinkedList::Insert| method.
 
-Also, this method is used to create two lists containing random values to be inserted and deleted from the linked list while performing the operations. Again, the \lstinline|std::set| is used to ensure that the values are unique.
-
 \subsection{Serial Linked List}
 
-The \lstinline|SerialLinkedList| extends the \lstinline|LinkedList| class and implements the serial linked list. The \lstinline|Member|, \lstinline|Insert|, and \lstinline|Remove| methods are implemented to perform the corresponding operations on the linked list. These methods are implemented following the code snippets provided with minimum modifications.
+The \lstinline|SerialLinkedList| extends the \lstinline|LinkedList| class and implements the serial linked list. The \lstinline|Member|, \lstinline|Insert|, and \lstinline|Remove| methods are implemented to perform the corresponding operations on the linked list. These methods are implemented following the provided code snippets with minimum modifications.
 
 \begin{lstlisting}
 class SerialLinkedList : public LinkedList
@@ -214,7 +211,7 @@ The \lstinline|MutexParallelLinkedList| extends the \lstinline|LinkedList| class
     \textbf{Listing 2.4.1:} \lstinline|MutexParallelLinkedList| class interface
 \end{center}
 
-Each of the \lstinline|Member|, \lstinline|Insert|, and \lstinline|Remove| methods acquires the mutex before the operation and releases it after the operation is completed. To perform the operation, it calls the same function from the parent \lstinline|SerialLinkedList| class. This ensures that only one thread can operate on the linked list at a time.
+Each of the \lstinline|Member|, \lstinline|Insert|, and \lstinline|Remove| methods acquires the mutex before the operation and releases it after the operation is completed. This ensures that only one thread can operate on the linked list at a time. To perform the operation, it calls the same function from the parent \lstinline|SerialLinkedList| class.
 
 \begin{lstlisting}
 bool MutexParallelLinkedList::Member(int data)
@@ -272,7 +269,7 @@ private:
     \textbf{Listing 2.5.1:} \lstinline|RwLockParallelLinkedList| class interface
 \end{center}
 
-The \lstinline|Member| method acquires the read lock before the operation and releases it after the operation is completed. This ensures that multiple threads can perform the \lstinline|Member| operation at the same time. The \lstinline|Insert| and \lstinline|Remove| methods acquire the write lock before the operation and release it after the operation is completed. This ensures that only one thread can perform an \lstinline|Insert| or \lstinline|Remove| operation at a time. To perform each operation, it calls the same function from the parent \lstinline|SerialLinkedList| class.
+The \lstinline|Member| method acquires the read lock before the operation and releases it after the operation is completed. This ensures that multiple threads can perform the \lstinline|Member| operation at the same time but no modification is allowed. The \lstinline|Insert| and \lstinline|Remove| methods acquire the write lock before the operation and release it after the operation is completed. This ensures that only one thread can perform an \lstinline|Insert| or \lstinline|Remove| operation at a time. To perform each operation, it calls the same function from the parent \lstinline|SerialLinkedList| class.
 
 \begin{lstlisting}
 bool RwLockParallelLinkedList::Member(int data)
@@ -311,8 +308,6 @@ The implementation of threading is done in the \lstinline|threading.h| and \lsti
 typedef struct ThreadArgs
 {
     LinkedList *list;
-    std::vector<int> *insertVals;
-    std::vector<int> *deleteVals;
     int m;
     double mMember;
     double mInsert;
@@ -323,14 +318,13 @@ typedef struct ThreadArgs
 
 void *thread_func(void *arg);
 long run_threads(int threadCnt, LinkedList *list,
-                    std::set<int> &insertVals, std::set<int> &deleteVals,
                     int m, double mMember, double mInsert, double mDelete);
 \end{lstlisting}
 \begin{center}
     \textbf{Listing 2.6.1:} \lstinline|threading.h| file
 \end{center}
 
-The implementation of the above two functions is done in the \lstinline|threading.cpp| file. Instead of using global variables to the required parameters, a pointer to the corresponding \lstinline|ThreadArgs|struct is passed as the argument to the thread function. The thread function will perform \( (m \times mMember)\ /\ threadCnt \) number of \lstinline|Member| operations with random values. It also performs \( (m \times mInsert)\ /\ threadCnt \) number of \lstinline|Insert| operations and \( (m \times mDelete)\ /\ threadCnt \) number of \lstinline|Remove| operations from the passed lists. The \lstinline|run_threads| function creates the threads and waits for them to complete. It also calculates the total time taken by the threads to complete the operations.
+The implementation of the above two functions is done in the \lstinline|threading.cpp| file. Instead of using global variables to the required parameters, a pointer to the corresponding \lstinline|ThreadArgs|struct is passed as the argument to the thread function. The thread function will perform \( (m \times mMember)\ /\ threadCnt \) number of \lstinline|Member| operations, \( (m \times mInsert)\ /\ threadCnt \) number of \lstinline|Insert| operations, and \( (m \times mDelete)\ /\ threadCnt \) number of \lstinline|Remove| operations with random values. The \lstinline|run_threads| function creates the threads and waits for them to complete. It also calculates the total time taken by the threads to complete the operations.
 
 \section{Configuration}
 
