@@ -2,7 +2,6 @@
 #define LINKED_LIST_H
 
 #include <iostream>
-#include <set>
 #include <pthread.h>
 
 class LinkedList
@@ -22,8 +21,7 @@ public:
         }
     }
 
-    void Populate(int n, int mInsert, int mDelete,
-                  std::set<int> &insertVals, std::set<int> &deleteVals);
+    void Populate(int n);
 
     virtual bool Member(int data) = 0;
     virtual bool Insert(int data) = 0;

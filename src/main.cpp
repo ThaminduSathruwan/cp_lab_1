@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <set>
 #include <pthread.h>
 #include "linked_list.h"
 #include "threading.h"
@@ -66,9 +65,8 @@ int main(int argc, char **argv)
     }
 
     std::string filename(argv[8]);
-    std::set<int> insertVals, deleteVals;
-    list->Populate(n, m * mInsert, m * mDelete, insertVals, deleteVals);
-    long timeDiff = run_threads(threadCnt, list, insertVals, deleteVals, m, mMember, mInsert, mDelete);
+    list->Populate(n);
+    long timeDiff = run_threads(threadCnt, list, m, mMember, mInsert, mDelete);
     delete list;
 
     return print_time_diff(filename, timeDiff) ? 0 : 1;
