@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <set>
 #include <pthread.h>
 #include "linked_list.h"
 #include "threading.h"
@@ -66,9 +65,8 @@ int main(int argc, char **argv)
     }
 
     std::string filename(argv[8]);
-    std::set<int> insertVals, deleteVals;
-    list->Populate(n, m * mInsert, m * mDelete, insertVals, deleteVals);
-    long timeDiff = run_threads(threadCnt, list, insertVals, deleteVals, m, mMember, mInsert, mDelete);
+    list->Populate(n);
+    long timeDiff = run_threads(threadCnt, list, m, mMember, mInsert, mDelete);
     delete list;
 
     return print_time_diff(filename, timeDiff) ? 0 : 1;
@@ -76,7 +74,7 @@ int main(int argc, char **argv)
 
 void print_usage()
 {
-    std::cerr << "Usage: ./linked_list <n> <m> <type> <m_Member> <m_Insert> <m_Delete>" << std::endl
+    std::cerr << "Usage: ./main <n> <m> <type> <thread_cnt> <m_Member> <m_Insert> <m_Delete> <filename>" << std::endl
               << "\tn:\t\tnumber of initial elements in the linked list" << std::endl
               << "\tm:\t\tnumber of operations per thread" << std::endl
               << "\ttype:\t\t1 for serial, 2 for mutex, 3 for rwlock" << std::endl
