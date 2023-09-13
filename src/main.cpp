@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
 void print_usage()
 {
-    std::cerr << "Usage: ./linked_list <n> <m> <type> <m_Member> <m_Insert> <m_Delete>" << std::endl
+    std::cerr << "Usage: ./main <n> <m> <type> <thread_cnt> <m_Member> <m_Insert> <m_Delete> <filename>" << std::endl
               << "\tn:\t\tnumber of initial elements in the linked list" << std::endl
               << "\tm:\t\tnumber of operations per thread" << std::endl
               << "\ttype:\t\t1 for serial, 2 for mutex, 3 for rwlock" << std::endl
