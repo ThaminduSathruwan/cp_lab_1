@@ -2,16 +2,12 @@
 #define THREADS_H
 
 #include <iostream>
-#include <set>
-#include <vector>
 #include <pthread.h>
 #include "linked_list.h"
 
 typedef struct ThreadArgs
 {
     LinkedList *list;
-    std::vector<int> *insertVals;
-    std::vector<int> *deleteVals;
     int m;
     double mMember;
     double mInsert;
@@ -22,7 +18,6 @@ typedef struct ThreadArgs
 
 void *thread_func(void *arg);
 long run_threads(int threadCnt, LinkedList *list,
-                 std::set<int> &insertVals, std::set<int> &deleteVals,
                  int m, double mMember, double mInsert, double mDelete);
 
 #endif // THREADS_H

@@ -4,8 +4,7 @@
 #include <pthread.h>
 #include "linked_list.h"
 
-void LinkedList::Populate(int n, int mInsert, int mDelete,
-                          std::set<int> &insertVals, std::set<int> &deleteVals)
+void LinkedList::Populate(int n)
 {
     std::srand(std::time(nullptr)); // use current time as seed for random generator
     std::set<int> uniqueVals;
@@ -35,26 +34,6 @@ void LinkedList::Populate(int n, int mInsert, int mDelete,
         }
         curr = next;
         length++;
-    }
-
-    // Generate numbers to delete that are already in the linked list
-    while (deleteVals.size() < (std::size_t)(mDelete))
-    {
-        int data = std::rand() % (1 << 16);
-        std::size_t size = uniqueVals.size();
-        uniqueVals.erase(data);
-        if (size != uniqueVals.size()) // if the set size not changed, then the value was in the set
-            deleteVals.insert(data);
-    }
-
-    // Generate numbers to insert that are not already in the linked list
-    while (insertVals.size() < (std::size_t)(mInsert))
-    {
-        int data = std::rand() % (1 << 16);
-        std::size_t size = uniqueVals.size();
-        uniqueVals.insert(data);
-        if (size != uniqueVals.size()) // if the set size changed, then the value was unique
-            insertVals.insert(data);
     }
 }
 
