@@ -4,15 +4,16 @@ from enum import Enum
 import os
 import numpy as np
 
+
 class Implementation(Enum):
     Serial = 1
     Mutex = 2
     rwLock = 3
 
 
-def getSampleSize(confidence_level, population_stddev, error):
+def getSampleSize(confidence_level, population_propotion, error):
     z_score = stats.norm.ppf((1 + confidence_level) / 2)
-    return int(round((z_score ** 2) * (population_stddev ** 2) / (error ** 2)))
+    return int(round((z_score ** 2) * population_propotion * (1 - population_propotion) / (error ** 2)))
 
 
 def getTimeForOperationsFile(thread_count, implementation_type, case, sample_size, mMember, mInsert, mDelete):
@@ -35,10 +36,13 @@ def getTimeForOperationsFile(thread_count, implementation_type, case, sample_siz
 
 def runCases(case_no, mMember, mInsert, mDelete, sample_size):
     for i in range(4):
-        getTimeForOperationsFile(2**i, "Mutex", case_no, sample_size, mMember, mInsert, mDelete)
-        getTimeForOperationsFile(2**i, "rwLock", case_no, sample_size, mMember, mInsert, mDelete)
+        getTimeForOperationsFile(
+            2**i, "Mutex", case_no, sample_size, mMember, mInsert, mDelete)
+        getTimeForOperationsFile(
+            2**i, "rwLock", case_no, sample_size, mMember, mInsert, mDelete)
         if i == 0:
-            getTimeForOperationsFile(2**i, "Serial", case_no, sample_size, mMember, mInsert, mDelete)  
+            getTimeForOperationsFile(
+                2**i, "Serial", case_no, sample_size, mMember, mInsert, mDelete)
 
 
 def calculateAvgAndStd():
@@ -49,7 +53,6 @@ def calculateAvgAndStd():
         for j in range(3):
             for k in range(1 if j == 0 else 4):
                 filename = f"results/Case{i + 1}/{Implementation(j + 1).name}_{2 ** k}.txt"
-                print(filename)
 
                 try:
                     with open(filename, 'r') as file:
@@ -62,10 +65,9 @@ def calculateAvgAndStd():
                     std = np.std(lines)
 
                     with open("results/final.txt", 'a') as results_file:
-                        # results_file.write(f"{avg:.2f}, {std:.2f}\n")
-                        results_file.write(f"File: {filename}, Average: {avg:.2f}, StdDev: {std:.2f}\n")
+                        results_file.write(
+                            f"File: {filename}, Average: {avg:.2f}, StdDev: {std:.2f}\n")
 
-                    print(f"{filename} average: {avg} std: {std}")
                 except FileNotFoundError:
                     print(f"{filename} File not found")
 
