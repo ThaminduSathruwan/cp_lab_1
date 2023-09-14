@@ -57,7 +57,10 @@ public:
         pthread_mutex_init(&mutex, NULL);
     }
 
-    ~MutexParallelLinkedList() {}
+    ~MutexParallelLinkedList()
+    {
+        pthread_mutex_destroy(&mutex);
+    }
 
     bool Member(int data) override;
     bool Insert(int data) override;
@@ -75,7 +78,10 @@ public:
         pthread_rwlock_init(&rwlock, NULL);
     }
 
-    ~RwLockParallelLinkedList() {}
+    ~RwLockParallelLinkedList()
+    {
+        pthread_rwlock_destroy(&rwlock);
+    }
 
     bool Member(int data) override;
     bool Insert(int data) override;
