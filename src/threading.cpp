@@ -1,6 +1,5 @@
 #include <iostream>
 #include <chrono>
-#include <set>
 #include <pthread.h>
 #include "linked_list.h"
 #include "threading.h"
@@ -19,32 +18,26 @@ void *thread_func(void *arg)
 
     // Delete
     int mDeleteLocal = (int)(args->mDelete * args->m) / args->threadCnt;
-    int myFirstDeleteIndex = ((int)(args->tid)) * mDeleteLocal;
-    int myLastDeleteIndex = myFirstDeleteIndex + mDeleteLocal;
-    for (int i = myFirstDeleteIndex; i < myLastDeleteIndex; ++i)
+    for (int i = 0; i < mDeleteLocal; ++i)
     {
-        args->list->Remove((*args->deleteVals)[i]);
+        int data = std::rand() % (1 << 16);
+        args->list->Remove(data);
     }
 
     // Insert
     int mInsertLocal = (int)(args->mInsert * args->m) / args->threadCnt;
-    int myFirstInsertIndex = ((int)(args->tid)) * mInsertLocal;
-    int myLastInsertIndex = myFirstInsertIndex + mInsertLocal;
-    for (int i = myFirstInsertIndex; i < myLastInsertIndex; ++i)
+    for (int i = 0; i < mInsertLocal; ++i)
     {
-        args->list->Insert((*args->insertVals)[i]);
+        int data = std::rand() % (1 << 16);
+        args->list->Insert(data);
     }
 
     return NULL;
 }
 
 long run_threads(int threadCnt, LinkedList *list,
-                 std::set<int> &insertVals, std::set<int> &deleteVals,
                  int m, double mMember, double mInsert, double mDelete)
 {
-    std::vector<int> insertValsVec(insertVals.begin(), insertVals.end());
-    std::vector<int> deleteValsVec(deleteVals.begin(), deleteVals.end());
-
     std::chrono::high_resolution_clock::time_point start_time, end_time;
     start_time = std::chrono::high_resolution_clock::now();
 
@@ -53,8 +46,6 @@ long run_threads(int threadCnt, LinkedList *list,
     for (int i = 0; i < threadCnt; ++i)
     {
         args[i].list = list;
-        args[i].insertVals = &insertValsVec;
-        args[i].deleteVals = &deleteValsVec;
         args[i].m = m;
         args[i].mMember = mMember;
         args[i].mInsert = mInsert;
