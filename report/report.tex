@@ -199,7 +199,7 @@ The \lstinline|MutexParallelLinkedList| extends the \lstinline|LinkedList| class
             pthread_mutex_init(&mutex, NULL);
         }
     
-        ~MutexParallelLinkedList() {}
+        ~MutexParallelLinkedList() { pthread_mutex_destroy(&mutex); }
     
         bool Member(int data) override;
         bool Insert(int data) override;
@@ -257,7 +257,7 @@ public:
         pthread_rwlock_init(&rwlock, NULL);
     }
 
-    ~RwLockParallelLinkedList() {}
+    ~RwLockParallelLinkedList() { pthread_rwlock_destroy(&rwlock); }
 
     bool Member(int data) override;
     bool Insert(int data) override;
@@ -363,7 +363,8 @@ The experiments were run on a computer with the following specifications:
     \item \textbf{RAM:} 16GB DDR4
     \item \textbf{System Type:} 64-bit Operating System, x64-based processor
     \item \textbf{OS:} Ubuntu 20.04 LTS
-    \item \textbf{WSL Version:} Windows Subsystem for Linux 2 (WSL2) is used to run Ubuntu
+    \item \textbf{Environment:} Windows Subsystem for Linux 2 (WSL2) on Windows Hyper-V
+    \item \textbf{Host OS:} Windows 11 Education 22H2
     \item \textbf{Physical Cores:} 4
     \item \textbf{Logical Cores:} 8
 \end{itemize}
