@@ -11,6 +11,8 @@
 
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{graphicx}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -326,9 +328,132 @@ long run_threads(int threadCnt, LinkedList *list,
 
 The implementation of the above two functions is done in the \lstinline|threading.cpp| file. Instead of using global variables to the required parameters, a pointer to the corresponding \lstinline|ThreadArgs|struct is passed as the argument to the thread function. The thread function will perform \( (m \times mMember)\ /\ threadCnt \) number of \lstinline|Member| operations, \( (m \times mInsert)\ /\ threadCnt \) number of \lstinline|Insert| operations, and \( (m \times mDelete)\ /\ threadCnt \) number of \lstinline|Remove| operations with random values. The \lstinline|run_threads| function creates the threads and waits for them to complete. It also calculates the total time taken by the threads to complete the operations.
 
-\section{Configuration}
+\section{Sample Size Calculation}
+
+To get the performance results within the required confidence interval and margin of error,
+the sample size should be calculated. The sample size is calculated using the following formula:
+
+\[
+    n = \frac{z^2 \times \hat{p} \times (1 - \hat{p})}{e^2}
+\]
+
+Where \( z \) is the z-score, \( \hat{p} \) is the population proportion, and \( e \) is the margin of error.
+We use following python function to calculate the sample size. We passed the confidence level as 0.95,
+population proportion as 0.5, and margin of error as 0.05 to the function.
+
+\lstset{style=pystyle}
+
+\begin{lstlisting}
+def getSampleSize(confidence_level, population_propotion, error):
+    z_score = stats.norm.ppf((1 + confidence_level) / 2)
+    return int(round((z_score ** 2) * population_propotion 
+        * (1 - population_propotion) / (error ** 2)))
+\end{lstlisting}
+
+The calculated sample size is 384. Therefore, we ran the experiments 384 times to get the performance
+results within the required confidence interval and margin of error.
+
+\section{Specifications of the Running Computer}
+
+The experiments were run on a computer with the following specifications:
+
+\begin{itemize}
+    \itemsep 0em
+    \item \textbf{Processor:} Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz   1.99 GHz
+    \item \textbf{RAM:} 16GB DDR4
+    \item \textbf{System Type:} 64-bit Operating System, x64-based processor
+    \item \textbf{OS:} Ubuntu 20.04 LTS
+    \item \textbf{WSL Version:} Windows Subsystem for Linux 2 (WSL2) is used to run Ubuntu
+    \item \textbf{Physical Cores:} 4
+    \item \textbf{Logical Cores:} 8
+\end{itemize}
 
 \section{Results}
+
+These are the mean and the standard deviation of the execution times (microseconds) of the
+\lstinline|Member|, \lstinline|Insert|, and \lstinline|Remove| operations of
+the serial linked list, concurrent linked list with mutexes, and concurrent
+linked list with read-write locks.
+
+\subsection{Case 1}
+
+n=1000, m=10000, m\textsubscript{Member}=0.99, m\textsubscript{Insert}=0.005, m\textsubscript{Delete}=0.005
+
+\begin{table}[h]
+    \small
+    \begin{tabular}{|l|llllllll|}
+        \hline
+        \multicolumn{1}{|c|}{\multirow{3}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Implemen\\ -tation\end{tabular}}}} & \multicolumn{8}{c|}{\textbf{No of threads}}                                                                                                                                                                                                                                                                         \\ \cline{2-9}
+        \multicolumn{1}{|c|}{}                                                                                     & \multicolumn{2}{c|}{\textbf{1}}             & \multicolumn{2}{c|}{\textbf{2}}   & \multicolumn{2}{c|}{\textbf{4}}       & \multicolumn{2}{c|}{\textbf{8}}                                                                                                                                                           \\ \cline{2-9}
+        \multicolumn{1}{|c|}{}                                                                                     & \multicolumn{1}{c|}{\textbf{Average}}       & \multicolumn{1}{c|}{\textbf{Std}} & \multicolumn{1}{c|}{\textbf{Average}} & \multicolumn{1}{c|}{\textbf{Std}} & \multicolumn{1}{c|}{\textbf{Average}} & \multicolumn{1}{c|}{\textbf{Std}} & \multicolumn{1}{c|}{\textbf{Average}} & \multicolumn{1}{c|}{\textbf{Std}} \\ \hline
+        Serial                                                                                                     & \multicolumn{1}{c|}{14368.44}               & \multicolumn{1}{c|}{857.82}       & \multicolumn{1}{c|}{-}                & \multicolumn{1}{c|}{-}            & \multicolumn{1}{c|}{-}                & \multicolumn{1}{c|}{-}            & \multicolumn{1}{c|}{-}                & \multicolumn{1}{c|}{-}            \\ \hline
+        \begin{tabular}[c]{@{}l@{}}One mutex \\ for entire list\end{tabular}                                       & \multicolumn{1}{c|}{15326.01}               & \multicolumn{1}{c|}{2422.30}      & \multicolumn{1}{c|}{33999.43}         & \multicolumn{1}{c|}{2750.07}      & \multicolumn{1}{c|}{37289.85}         & \multicolumn{1}{c|}{8222.74}      & \multicolumn{1}{c|}{47572.92}         & \multicolumn{1}{c|}{4162.54}      \\ \hline
+        \begin{tabular}[c]{@{}l@{}}Read-Write \\ lock\end{tabular}                                                 & \multicolumn{1}{c|}{14563.0}                & \multicolumn{1}{c|}{1128.00}      & \multicolumn{1}{c|}{12125.18}         & \multicolumn{1}{c|}{1668.12}      & \multicolumn{1}{c|}{9752.32}          & \multicolumn{1}{c|}{2223.47}      & \multicolumn{1}{c|}{6828.53}          & \multicolumn{1}{c|}{2747.13}      \\ \hline
+    \end{tabular}
+\end{table}
+
+Figure \ref{fig:case1} shows the average execution time plot for case 1.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/case1.png}
+    \caption{Average execution time plot for case 1}
+    \label{fig:case1}
+\end{figure}
+
+\subsection{Case 2}
+
+n=1000, m=10000, m\textsubscript{Member}=0.90, m\textsubscript{Insert}=0.05, m\textsubscript{Delete}=0.05
+
+\begin{table}[h]
+    \small
+    \begin{tabular}{|l|llllllll|}
+        \hline
+        \multicolumn{1}{|c|}{\multirow{3}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Implemen\\ -tation\end{tabular}}}} & \multicolumn{8}{c|}{\textbf{No of threads}}                                                                                                                                                                                                                                                                         \\ \cline{2-9}
+        \multicolumn{1}{|c|}{}                                                                                     & \multicolumn{2}{c|}{\textbf{1}}             & \multicolumn{2}{c|}{\textbf{2}}   & \multicolumn{2}{c|}{\textbf{4}}       & \multicolumn{2}{c|}{\textbf{8}}                                                                                                                                                           \\ \cline{2-9}
+        \multicolumn{1}{|c|}{}                                                                                     & \multicolumn{1}{c|}{\textbf{Average}}       & \multicolumn{1}{c|}{\textbf{Std}} & \multicolumn{1}{c|}{\textbf{Average}} & \multicolumn{1}{c|}{\textbf{Std}} & \multicolumn{1}{c|}{\textbf{Average}} & \multicolumn{1}{c|}{\textbf{Std}} & \multicolumn{1}{c|}{\textbf{Average}} & \multicolumn{1}{c|}{\textbf{Std}} \\ \hline
+        Serial                                                                                                     & \multicolumn{1}{c|}{16559.35}               & \multicolumn{1}{c|}{2633.58}      & \multicolumn{1}{c|}{-}                & \multicolumn{1}{c|}{-}            & \multicolumn{1}{c|}{-}                & \multicolumn{1}{c|}{-}            & \multicolumn{1}{c|}{-}                & \multicolumn{1}{c|}{-}            \\ \hline
+        \begin{tabular}[c]{@{}l@{}}One mutex \\ for entire list\end{tabular}                                       & \multicolumn{1}{c|}{17042.13}               & \multicolumn{1}{c|}{2226.58}      & \multicolumn{1}{c|}{39230.61}         & \multicolumn{1}{c|}{6043.93}      & \multicolumn{1}{c|}{46875.51}         & \multicolumn{1}{c|}{8381.03}      & \multicolumn{1}{c|}{53189.61}         & \multicolumn{1}{c|}{6066.44}      \\ \hline
+        \begin{tabular}[c]{@{}l@{}}Read-Write \\ lock\end{tabular}                                                 & \multicolumn{1}{c|}{18679.82}               & \multicolumn{1}{c|}{4403.54}      & \multicolumn{1}{c|}{23186.73}         & \multicolumn{1}{c|}{10084.84}     & \multicolumn{1}{c|}{13628.77}         & \multicolumn{1}{c|}{2173.77}      & \multicolumn{1}{c|}{11339.61}         & \multicolumn{1}{c|}{2384.95}      \\ \hline
+    \end{tabular}
+\end{table}
+
+Figure \ref{fig:case2} shows the average execution time plot for case 2.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/case2.png}
+    \caption{Average execution time plot for case 2}
+    \label{fig:case2}
+\end{figure}
+
+\subsection{Case 3}
+
+n=1000, m=10000, m\textsubscript{Member}=0.5, m\textsubscript{Insert}=0.25, m\textsubscript{Delete}=0.25
+
+\begin{table}[h]
+    \small
+    \begin{tabular}{|l|llllllll|}
+        \hline
+        \multicolumn{1}{|c|}{\multirow{3}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Implemen\\ -tation\end{tabular}}}} & \multicolumn{8}{c|}{\textbf{No of threads}}                                                                                                                                                                                                                                                                         \\ \cline{2-9}
+        \multicolumn{1}{|c|}{}                                                                                     & \multicolumn{2}{c|}{\textbf{1}}             & \multicolumn{2}{c|}{\textbf{2}}   & \multicolumn{2}{c|}{\textbf{4}}       & \multicolumn{2}{c|}{\textbf{8}}                                                                                                                                                           \\ \cline{2-9}
+        \multicolumn{1}{|c|}{}                                                                                     & \multicolumn{1}{c|}{\textbf{Average}}       & \multicolumn{1}{c|}{\textbf{Std}} & \multicolumn{1}{c|}{\textbf{Average}} & \multicolumn{1}{c|}{\textbf{Std}} & \multicolumn{1}{c|}{\textbf{Average}} & \multicolumn{1}{c|}{\textbf{Std}} & \multicolumn{1}{c|}{\textbf{Average}} & \multicolumn{1}{c|}{\textbf{Std}} \\ \hline
+        Serial                                                                                                     & \multicolumn{1}{c|}{24701.33}               & \multicolumn{1}{c|}{4609.62}      & \multicolumn{1}{c|}{-}                & \multicolumn{1}{c|}{-}            & \multicolumn{1}{c|}{-}                & \multicolumn{1}{c|}{-}            & \multicolumn{1}{c|}{-}                & \multicolumn{1}{c|}{-}            \\ \hline
+        \begin{tabular}[c]{@{}l@{}}One mutex \\ for entire list\end{tabular}                                       & \multicolumn{1}{c|}{22068.34}               & \multicolumn{1}{c|}{1568.51}      & \multicolumn{1}{c|}{50801.73}         & \multicolumn{1}{c|}{7032.42}      & \multicolumn{1}{c|}{69534.08}         & \multicolumn{1}{c|}{16038.64}     & \multicolumn{1}{c|}{95056.90}         & \multicolumn{1}{c|}{17094.91}     \\ \hline
+        \begin{tabular}[c]{@{}l@{}}Read-Write \\ lock\end{tabular}                                                 & \multicolumn{1}{c|}{22973.35}               & \multicolumn{1}{c|}{2311.93}      & \multicolumn{1}{c|}{52427.07}         & \multicolumn{1}{c|}{16754.70}     & \multicolumn{1}{c|}{54487.90}         & \multicolumn{1}{c|}{11847.46}     & \multicolumn{1}{c|}{63159.63}         & \multicolumn{1}{c|}{8815.97}      \\ \hline
+    \end{tabular}
+\end{table}
+
+Figure \ref{fig:case3} shows the average execution time plot for case 3.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/case3.png}
+    \caption{Average execution time plot for case 3}
+    \label{fig:case3}
+\end{figure}
+
+\clearpage
 
 \section{Discussion}
 
