@@ -457,4 +457,20 @@ Figure \ref{fig:case3} shows the average execution time plot for case 3.
 
 \section{Discussion}
 
+\subsection{Case 01}
+
+As we can see in Figure \ref{fig:case1}, for one thread, the three types of lists took almost the same average time. Therefore, for 1 thread, all the types of lists behave similarly. But when the thread count is increasing, the list with mutex and the list with read-write lock behave differently.
+
+The list with the mutex shows an increase in average time taken with the number of threads. The thread function \lstinline|thread_func| only performs the list-related operations. Since we used a single mutex for the entire list, no operation on the list is allowed in parallel. Therefore, in the ideal scenario, it should behave similarly to the serial list with one thread. However, using multiple threads will introduce an overhead, especially for context switching and this overhead increases when the number of threads increases. Now, we do not have any performance gain with multithreading but there is an increasing overhead. Therefore, the average time taken has increased with the number of threads for the list with mutex.
+
+The list with the read-write lock has behaved well. The average time taken has been reduced when the number of threads increased. In case 1, 99\% of the operations are \lstinline|Member| operations. Therefore, with a read-write lock, multiple concurrent \lstinline|Member| operations are allowed since it takes the read lock. Even though the \lstinline|Insert| and \lstinline|Remove| operations take the write clock not allowing concurrent operations, due to the lower percentage of such operations, the effect is reduced. Therefore, when the number of threads is increased, the average time taken has decreased.
+
+\subsection{Case 02}
+
+As we can see in Figure \ref{fig:case2}, case 2 is similar to case 1 for the list with mutex. Even though the number of  \lstinline|Insert| and \lstinline|Remove| operations are increased, since all the operations are required to acquire the mutex, the behaviour is similar. But with the read-write clock, there is a slight change. We can see the average time taken has been increased for two threads but later it decreases. The increased \lstinline|Insert| and \lstinline|Remove| operation counts have affected the running time. But when the number of threads is increased further, again the performance gain due to multiple threads has overcome the increased overhead. Therefore, the average time taken has been decreased with increased number of threads.
+
+\subsection{Case 03}
+
+As we can see in Figure \ref{fig:case3}, case 3 is also similar to cases 1 and 2 for the list with mutex due to the same reason. However, the behaviour of the list with a read-write lock has been altered significantly. In case 3, the fraction of the \lstinline|Member| operations is 50\% and the rest 50\% are  \lstinline|Insert| and \lstinline|Remove| operations. Therefore, since executing these \lstinline|Insert| and \lstinline|Remove| operations will not allow any other operation, the overhead has increased significantly. When the number of threads is increased, the overhead is also increased. Therefore, the average time taken for the list with a read-write lock has also increased with the number of threads.
+
 \end{document}
